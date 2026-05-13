@@ -2,10 +2,11 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <!-- Meta para que se ajuste perfectamente a cualquier pantalla móvil -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- Enlace al manifiesto para instalación -->
-    <link rel="mani" href="mani.json">
+    
+    <!-- Corrección del enlace al manifiesto -->
+    <link rel="manifest" href="mani.json">
+    
     <meta name="theme-color" content="#0056b3">
     <title>Inventario Tienda - Ayber</title>
     <style>
@@ -16,7 +17,6 @@
             --fondo: #f8f9fa;
         }
 
-        /* Asegura que nada se salga de los bordes del celular */
         * { box-sizing: border-box; }
 
         body { 
@@ -45,7 +45,7 @@
         #search-box {
             width: 100%; padding: 15px; border: 3px solid var(--azul); border-radius: 12px;
             font-size: 1.1rem; box-sizing: border-box; outline: none;
-            -webkit-appearance: none; /* Mejor visualización en iPhone */
+            -webkit-appearance: none;
         }
 
         .product-card { 
@@ -100,9 +100,11 @@
 </div>
 
 <script>
-    // Registro de Service Worker para que sea instalable
+    // Registro del Service Worker usando tu nombre de archivo 'sv.js'
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sv.js').catch(err => console.log("SV no registrado", err));
+        navigator.serviceWorker.register('sv.js')
+            .then(reg => console.log("SV registrado correctamente", reg))
+            .catch(err => console.log("Error al registrar SV", err));
     }
 
     let productos = [
