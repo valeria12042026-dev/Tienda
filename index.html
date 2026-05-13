@@ -2,7 +2,11 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Meta para que se ajuste perfectamente a cualquier pantalla móvil -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Enlace al manifiesto para instalación -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0056b3">
     <title>Inventario Tienda - Ayber</title>
     <style>
         :root {
@@ -12,11 +16,15 @@
             --fondo: #f8f9fa;
         }
 
+        /* Asegura que nada se salga de los bordes del celular */
+        * { box-sizing: border-box; }
+
         body { 
             font-family: Arial, sans-serif; 
             background-color: var(--fondo); 
             margin: 0; padding: 10px; 
             color: var(--texto);
+            overscroll-behavior: contain;
         }
 
         .container { width: 100%; max-width: 450px; margin: auto; }
@@ -37,6 +45,7 @@
         #search-box {
             width: 100%; padding: 15px; border: 3px solid var(--azul); border-radius: 12px;
             font-size: 1.1rem; box-sizing: border-box; outline: none;
+            -webkit-appearance: none; /* Mejor visualización en iPhone */
         }
 
         .product-card { 
@@ -69,6 +78,7 @@
             color: white; border: none; border-radius: 15px; font-weight: bold; 
             font-size: 1.4rem; cursor: pointer; position: sticky; bottom: 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 100;
         }
     </style>
 </head>
@@ -90,23 +100,19 @@
 </div>
 
 <script>
-    // Todos los productos ahora usan "Paquetes"
+    // Registro de Service Worker para que sea instalable
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(err => console.log("SW no registrado", err));
+    }
+
     let productos = [
-        { nombre: "Agua" },
-        { nombre: "Cancha" },
-        { nombre: "Chizito" },
-        { nombre: "Chizito sin picante" },
-        { nombre: "Chistris" },
-        { nombre: "Cuates" },
-        { nombre: "Cuates tornillo" },
-        { nombre: "Galleta soda" },
-        { nombre: "Galleta vainilla" },
-        { nombre: "Gaseosa" },
-        { nombre: "Gelatina" },
-        { nombre: "Hot Dog" }
+        { nombre: "Agua" }, { nombre: "Cancha" }, { nombre: "Chizito" },
+        { nombre: "Chizito sin picante" }, { nombre: "Chistris" },
+        { nombre: "Cuates" }, { nombre: "Cuates tornillo" },
+        { nombre: "Galleta soda" }, { nombre: "Galleta vainilla" },
+        { nombre: "Gaseosa" }, { nombre: "Gelatina" }, { nombre: "Hot Dog" }
     ];
 
-    // Asegurar orden alfabético
     productos.sort((a, b) => a.nombre.localeCompare(b.nombre));
 
     function actualizarFecha() {
@@ -118,7 +124,6 @@
     function initApp() {
         actualizarFecha();
         const container = document.getElementById('product-list');
-        
         productos.forEach(p => {
             const id = p.nombre.replace(/\s+/g, '-').toLowerCase();
             const card = document.createElement('div');
@@ -126,18 +131,10 @@
             card.setAttribute('data-name', p.nombre);
             card.innerHTML = `
                 <span class="product-name">${p.nombre}</span>
-                <div class="status-bar">
-                    Hay guardado: <span id="display-${id}">0 Pq y 0 Un</span>
-                </div>
+                <div class="status-bar">Hay guardado: <span id="display-${id}">0 Pq y 0 Un</span></div>
                 <div class="input-row">
-                    <div class="input-field">
-                        <label>Paquetes</label>
-                        <input type="number" id="p-${id}" placeholder="0" onfocus="this.select()">
-                    </div>
-                    <div class="input-field">
-                        <label>Unidades</label>
-                        <input type="number" id="u-${id}" placeholder="0" onfocus="this.select()">
-                    </div>
+                    <div class="input-field"><label>Paquetes</label><input type="number" id="p-${id}" placeholder="0" onfocus="this.select()"></div>
+                    <div class="input-field"><label>Unidades</label><input type="number" id="u-${id}" placeholder="0" onfocus="this.select()"></div>
                 </div>
             `;
             container.appendChild(card);
@@ -159,13 +156,10 @@
             const id = p.nombre.replace(/\s+/g, '-').toLowerCase();
             const pVal = document.getElementById(`p-${id}`).value || 0;
             const uVal = document.getElementById(`u-${id}`).value || 0;
-            
             document.getElementById(`display-${id}`).innerText = `${pVal} Pq y ${uVal} Unidades`;
-            
             localStorage.setItem(`p-${id}`, pVal);
             localStorage.setItem(`u-${id}`, uVal);
         });
-        
         const btn = document.getElementById('save-btn');
         btn.innerText = "¡GUARDADO CON ÉXITO!";
         btn.style.backgroundColor = "#0056b3";
@@ -180,7 +174,6 @@
             const id = p.nombre.replace(/\s+/g, '-').toLowerCase();
             const pRes = localStorage.getItem(`p-${id}`) || 0;
             const uRes = localStorage.getItem(`u-${id}`) || 0;
-            
             document.getElementById(`p-${id}`).value = pRes;
             document.getElementById(`u-${id}`).value = uRes;
             document.getElementById(`display-${id}`).innerText = `${pRes} Pq y ${uRes} Unidades`;
@@ -189,7 +182,5 @@
 
     window.onload = initApp;
 </script>
-
 </body>
 </html>
-
