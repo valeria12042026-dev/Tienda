@@ -5,7 +5,7 @@
     <!-- Meta para que se ajuste perfectamente a cualquier pantalla móvil -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <!-- Enlace al manifiesto para instalación -->
-    <link rel="manifest" href="manifest.json">
+    <link rel="mani" href="mani.json">
     <meta name="theme-color" content="#0056b3">
     <title>Inventario Tienda - Ayber</title>
     <style>
@@ -102,7 +102,7 @@
 <script>
     // Registro de Service Worker para que sea instalable
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').catch(err => console.log("SW no registrado", err));
+        navigator.serviceWorker.register('sv.js').catch(err => console.log("SV no registrado", err));
     }
 
     let productos = [
